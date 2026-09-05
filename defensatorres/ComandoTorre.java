@@ -1,8 +1,10 @@
 package defensatorres;
 
+/** Contrato de una acción reversible realizada sobre una torre. */
 public interface ComandoTorre {
-
-    void ejecutar();
+    boolean ejecutar();
 
     void deshacer();
+
+    String getDescripcion();
 }

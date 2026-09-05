@@ -1,17 +1,55 @@
 package defensatorres;
 
-public class Torre {
+/** Representa una torre colocada en el mapa. */
+public final class Torre {
+    public static final int NIVEL_MAXIMO = 3;
 
-    private TipoTorre tipo;
-    private Posicion posicion;
+    private final TipoTorre tipo;
+    private final Posicion posicion;
     private int nivel;
-    private int alcance;
 
     public Torre(TipoTorre tipo, Posicion posicion) {
+        if (tipo == null || posicion == null) {
+            throw new IllegalArgumentException("El tipo y la posición son obligatorios.");
+        }
         this.tipo = tipo;
         this.posicion = posicion;
         this.nivel = 1;
-        this.alcance = 2;
+    }
+
+    public boolean puedeAtacar(Posicion posicionCozy) {
+        return posicion.distanciaA(posicionCozy) <= getAlcanceActual();
+    }
+
+    public boolean puedeMejorar() {
+        return nivel < NIVEL_MAXIMO;
+    }
+
+    public void mejorar() {
+        if (!puedeMejorar()) {
+            throw new IllegalStateException("La torre ya alcanzó el nivel máximo.");
+        }
+        nivel++;
+    }
+
+    public void revertirMejora() {
+        if (nivel <= 1) {
+            throw new IllegalStateException("La torre ya está en el nivel inicial.");
+        }
+        nivel--;
+    }
+
+    public int getDanioActual() {
+        double incremento = 1.0 + ((nivel - 1) * 0.55);
+        return (int) Math.round(tipo.getDanioBase() * incremento);
+    }
+
+    public double getAlcanceActual() {
+        return tipo.getAlcanceBase() + ((nivel - 1) * 0.25);
+    }
+
+    public int getCostoSiguienteMejora() {
+        return tipo.calcularCostoMejora(nivel);
     }
 
     public TipoTorre getTipo() {
@@ -26,27 +64,8 @@ public class Torre {
         return nivel;
     }
 
-    public int getAlcance() {
-        return alcance;
-    }
-
-    public int getDano() {
-        return tipo.getDano() * nivel;
-    }
-
-    public void mejorar() {
-        nivel++;
-        alcance++;
-    }
-
     @Override
     public String toString() {
-        return "Torre{" +
-                "tipo=" + tipo +
-                ", posicion=" + posicion +
-                ", nivel=" + nivel +
-                ", alcance=" + alcance +
-                ", dano=" + getDano() +
-                '}';
+        return tipo.getNombre() + " nivel " + nivel + " en " + posicion;
     }
 }

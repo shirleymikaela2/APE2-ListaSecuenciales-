@@ -1,22 +1,27 @@
 package defensatorres;
 
-public class ColocarTorreComando implements ComandoTorre {
-
-    private final Mapa mapa;
+/** Acción reversible para colocar una torre. */
+public final class ColocarTorreComando implements ComandoTorre {
+    private final MotorJuego motor;
     private final Torre torre;
 
-    public ColocarTorreComando(Mapa mapa, Torre torre) {
-        this.mapa = mapa;
+    public ColocarTorreComando(MotorJuego motor, Torre torre) {
+        this.motor = motor;
         this.torre = torre;
     }
 
     @Override
-    public void ejecutar() {
-        mapa.agregarTorre(torre);
+    public boolean ejecutar() {
+        return motor.colocarTorreSinHistorial(torre);
     }
 
     @Override
     public void deshacer() {
-        mapa.eliminarTorre(torre);
+        motor.quitarTorreSinHistorial(torre);
+    }
+
+    @Override
+    public String getDescripcion() {
+        return "Colocar " + torre.getTipo().getNombre() + " en " + torre.getPosicion();
     }
 }
